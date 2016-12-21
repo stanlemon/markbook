@@ -1,0 +1,46 @@
+{
+  "name": "markbook",
+  "version": "0.1.0",
+  "description": "A markdown notebook that uses the file system",
+  "author": "Stan Lemon <stosh1985@gmail.com>",
+  "license": "MIT",
+  "main": "main.js",
+  "scripts": {
+    "start": "NODE_ENV=development electron main.js",
+    "test": "mocha",
+    "build": "babel src -d dist",
+    "lint": "eslint src",
+    "pack": "electron-packager . RetroJs --overwrite --platform=darwin --arch=x64 --version=0.37.1 --asar=false --prune --ignore='src' --ignore='release' --ignore='test' --out=release",
+    "rebuild": "electron-rebuild"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-eslint": "7.1",
+    "babel-polyfill": "^6.20.0",
+    "babel-preset-env": "^1.1.4",
+    "babel-preset-latest": "^6.16.0",
+    "babel-preset-react": "^6.16.0",
+    "electron-packager": "^8.3.0",
+    "electron-prebuilt-compile": "^1.3.9",
+    "electron-rebuild": "^1.4.0",
+    "eslint": "3.8.1",
+    "eslint-config-react-app": "^0.5.0",
+    "eslint-loader": "1.6.0",
+    "eslint-plugin-flowtype": "2.21.0",
+    "eslint-plugin-import": "2.0.1",
+    "eslint-plugin-jsx-a11y": "2.2.3",
+    "eslint-plugin-react": "6.4.1"
+  },
+  "dependencies": {
+    "chokidar": "^1.6.1",
+    "electron": "^1.4.13",
+    "localforage": "^1.4.3",
+    "lodash": "^4.17.2",
+    "react": "^15.4.0",
+    "react-dom": "^15.4.0",
+    "react-redux": "^4.4.6",
+    "redux": "^3.6.0",
+    "redux-persist": "^4.0.0",
+    "simplemde": "^1.11.2"
+  }
+}
