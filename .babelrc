@@ -4,8 +4,7 @@
     "latest",
     ["env", {
       "targets": {
-        "node": "6.5.0",
-        "chrome": 53
+        "node": "6.5.0"
       }
     }]
   ]

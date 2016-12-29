@@ -1,20 +1,9 @@
 
-const INCREMENT = 'INCREMENT';
-const AUTHENTICATE = 'AUTHENTICATE';
+export const SET_DIRECTORY = 'SET_DIRECTORY';
 
-module.exports = {
-    INCREMENT,
-    AUTHENTICATE,
-
-    increment: () => {
-        return {
-            type: INCREMENT
-        };
-    },
-
-    authenticate: () => {
-        return {
-            type: AUTHENTICATE
-        };
-    }
-};
+export function setDirectory(directory) {
+    return {
+        type: SET_DIRECTORY,
+        directory
+    };
+}
