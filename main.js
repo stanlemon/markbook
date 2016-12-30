@@ -72,75 +72,88 @@ const menus = [
     },
     {
         label: 'Edit',
-        submenu: [{
-            label: 'Undo',
-            accelerator: 'CmdOrCtrl+Z',
-            role: 'undo'
-        }, {
-            label: 'Redo',
-            accelerator: 'Shift+CmdOrCtrl+Z',
-            role: 'redo'
-        }, {
-            type: 'separator'
-        }, {
-            label: 'Cut',
-            accelerator: 'CmdOrCtrl+X',
-            role: 'cut'
-        }, {
-            label: 'Copy',
-            accelerator: 'CmdOrCtrl+C',
-            role: 'copy'
-        }, {
-            label: 'Paste',
-            accelerator: 'CmdOrCtrl+V',
-            role: 'paste'
-        }, {
-            label: 'Select All',
-            accelerator: 'CmdOrCtrl+A',
-            role: 'selectall'
-        }]
+        submenu: [
+            {
+                label: 'Undo',
+                accelerator: 'CmdOrCtrl+Z',
+                role: 'undo'
+            },
+            {
+                label: 'Redo',
+                accelerator: 'Shift+CmdOrCtrl+Z',
+                role: 'redo'
+            },
+            {
+                type: 'separator'
+            },
+            {
+                label: 'Cut',
+                accelerator: 'CmdOrCtrl+X',
+                role: 'cut'
+            },
+            {
+                label: 'Copy',
+                accelerator: 'CmdOrCtrl+C',
+                role: 'copy'
+            },
+            {
+                label: 'Paste',
+                accelerator: 'CmdOrCtrl+V',
+                role: 'paste'
+            },
+            {
+                label: 'Select All',
+                accelerator: 'CmdOrCtrl+A',
+                role: 'selectall'
+            }
+        ]
     },
     {
         label: 'View',
         submenu: [
             {
-                label: 'Reload',
-                accelerator: 'CmdOrCtrl+R',
-                click: function (item, focusedWindow) {
-                    if (focusedWindow) {
-                        focusedWindow.reload()
+                label: 'Sort by...',
+                submenu: [
+                    {
+                        label: 'Name',
+                        accelerator: 'Command+Alt+N',
+                        click: (item, window) => {
+                            window.webContents.send('sort-by', 'name');
+                        }
+                    },
+                    {
+                        label: 'Date Created',
+                        accelerator: 'Command+Alt+B',
+                        click: (item, window) => {
+                            window.webContents.send('sort-by', 'created');
+                        }
+                    },
+                    {
+                        label: 'Date Modified',
+                        accelerator: 'Command+Alt+M',
+                        click: (item, window) => {
+                            window.webContents.send('sort-by', 'modified');
+                        }
                     }
-                }
+                ]
             },
             {
-                label: 'Toggle Full Screen',
-                accelerator: (function () {
-                    if (process.platform === 'darwin') {
-                        return 'Ctrl+Command+F'
-                    } else {
-                        return 'F11'
-                    }
-                })(),
-                click: function (item, focusedWindow) {
-                    if (focusedWindow) {
-                        focusedWindow.setFullScreen(!focusedWindow.isFullScreen())
-                    }
-                }
+                type: 'separator'
             },
             {
-                label: 'Toggle Developer Tools',
-                accelerator: (function () {
-                    if (process.platform === 'darwin') {
-                    return 'Alt+Command+I'
-                    } else {
-                    return 'Ctrl+Shift+I'
-                    }
-                })(),
-                click: function (item, focusedWindow) {
-                    if (focusedWindow) {
-                        focusedWindow.webContents.toggleDevTools()
-                    }
-                }
+                role: 'zoomin'
+            },
+            {
+                role: 'zoomout'
+            },
+            {
+                role: 'resetzoom'
+            },
+            {
+                type: 'separator'
+            },
+            {
+                role: 'togglefullscreen'
             },
             {
                 type: 'separator'
@@ -183,6 +196,38 @@ const menus = [
                 label: 'Follow @stanlemon on Twitter',
                 click: function () {
                     //shell.openExternal('https://twitter.com/stanlemon')
+                }
+            }
+        ]
+    },
+    {
+        label: 'Develop',
+        submenu: [
+            {
+                type: 'separator'
+            },
+            {
+                label: 'Reload',
+                accelerator: 'CmdOrCtrl+R',
+                click: function (item, focusedWindow) {
+                    if (focusedWindow) {
+                        focusedWindow.reload()
+                    }
+                }
+            },
+            {
+                label: 'Toggle Developer Tools',
+                accelerator: (function () {
+                    if (process.platform === 'darwin') {
+                    return 'Alt+Command+I'
+                    } else {
+                    return 'Ctrl+Shift+I'
+                    }
+                })(),
+                click: function (item, focusedWindow) {
+                    if (focusedWindow) {
+                        focusedWindow.webContents.toggleDevTools()
+                    }
                 }
             }
         ]
@@ -231,21 +276,23 @@ function openDirectory() {
     dialog.showOpenDialog({
         properties: ['openDirectory'],
     }, (directories) => {
-        createWindow(directories[0]);
+        if (directories && directories[0]) {
+            createWindow(directories[0]);
 
-        settings.windows = [...new Set([
-            ...settings.windows,
-            {
-                directory: directories[0]
-            }
-        ])];
+            settings.windows = [...new Set([
+                ...settings.windows,
+                {
+                    directory: directories[0]
+                }
+            ])];
 
-        saveSettings(settings);
+            saveSettings(settings);
+        }
     });
 }
 
 function newFile(directory, callback) {
-    const date = format(Date.now, 'YYYY-MM-DD');
+    const date = format(Date.now(), 'YYYY-MM-DD HH:mm');
 
     dialog.showSaveDialog({
         title: date,
@@ -267,8 +314,6 @@ function createWindow(directory, position = [null, null], size = [800, 600], ful
         return;
     }
 
-    app.addRecentDocument(directory);
-
     const appWindow = new BrowserWindow({
         minWidth: 720,
         minHeight: 450,
@@ -277,8 +322,10 @@ function createWindow(directory, position = [null, null], size = [800, 600], ful
         height: size[1],
         x: position[0],
         y: position[1],
-        title: directory
+        title: path.basename(directory)
     });
+
+    appWindow.setRepresentedFilename(directory);
 
     if (fullscreen) {
         appWindow.setFullScreen(true);
@@ -292,7 +339,7 @@ function createWindow(directory, position = [null, null], size = [800, 600], ful
         appWindow.loadURL('file://' + __dirname + '/src/index.html?directory=' + directory);
         appWindow.webContents.openDevTools();
     } else {
-        appWindow.loadURL('fi197le://' + __dirname + '/dist/index.html?directory=' + directory);
+        appWindow.loadURL('file://' + __dirname + '/dist/index.html?directory=' + directory);
     }
 
     appWindow.on('close', (e) => {
@@ -351,6 +398,10 @@ app.on('ready', () => {
     }
 
     app.focus();
+});
+
+app.on('open-file', (e, path) => {
+    openDirectory(path);
 });
 
 app.on('window-all-closed', () => {

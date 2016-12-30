@@ -1,5 +1,7 @@
 require("babel-polyfill");
 
+const { ipcRenderer } = require('electron');
+
 const React = require('react');
 const fs = require('fs');
 const path = require('path');
@@ -26,6 +28,14 @@ module.exports = class App extends React.Component {
     }
 
     componentDidMount() {
+        ipcRenderer.on('sort-by', (e, type) => {
+            this.setSortBy(type);
+        });
+
+        ipcRenderer.on('new-file', (e, file) => {
+            this.openFile(file);
+        });
+
         this.simplemde = new SimpleMde({
             autofocus: true,
             hideIcons: ['fullscreen', 'side-by-side'],
@@ -34,14 +44,6 @@ module.exports = class App extends React.Component {
                 codeSyntaxHighlighting: true
             },
             showIcons: ["code", "table"],
-
-            /*
-            autosave: {
-                enabled: true,
-                uniqueId: 'simplemd',
-                delay: 1000,
-            }
-            */
         });
 
         this.simplemde.codemirror.on("change", () => {
@@ -62,9 +64,7 @@ module.exports = class App extends React.Component {
             }
         }, 1000);
 
-        const { directory } = this.props;
-
-        const watcher = chokidar.watch(directory, {
+        const watcher = chokidar.watch(this.props.directory, {
             ignored: /[\/\\]\./,
             persistent: true
         });
@@ -72,6 +72,10 @@ module.exports = class App extends React.Component {
         watcher
             .on('add', (f) => {
                 const stats = fs.statSync(f);
+
+                if (this.state.files.size === 0) {
+                    this.openFile(f);
+                }
 
                 this.setState({
                     files: this.state.files.add({
@@ -84,9 +88,9 @@ module.exports = class App extends React.Component {
             })
             .on('unlink', (f) => {
                 this.setState({
-                    files: this.state.files.filter((file) => {
-                        return f !== file.name;
-                    })
+                    files: new Set([...this.state.files].filter((file) => {
+                        return f !== file.path
+                    }))
                 });
             })
             .on('change', (f) => {
@@ -118,7 +122,7 @@ module.exports = class App extends React.Component {
     }
 
     sortFiles() {
-        return new Set([...this.state.files].sort((a, b) => {
+        return [...new Set([...this.state.files].sort((a, b) => {
             const type = this.state.sort;
             if (this.state.direction === 'ASC') {
                 if (this.isDate(a[type])) {
@@ -131,16 +135,22 @@ module.exports = class App extends React.Component {
                 }
                 return b[type] > a[type];
             }
-        }));
+        }))];
     }
 
     render() {
+        const files = this.sortFiles();
+
+        const activeCss = {
+            backgroundColor: '#eee'
+        };
+
         return (
             <SplitPane split="vertical" minSize={200} defaultSize={250}>
                 <div className="pane">
                     <ul className="note-list">
-                    {[...this.state.files].map((file) => (
-                        <li key={file.name} onClick={this.openFile.bind(this, file.path)}>
+                    {files.map((file) => (
+                        <li style={file.path === this.state.active ? activeCss : {}} key={file.name} onClick={this.openFile.bind(this, file.path)}>
                             <div style={{ textOverflow: 'ellipsis-word', lineHeight: '1.2em', whiteSpace: 'nowrap' }}>
                                 {file.name}
                             </div>
@@ -157,11 +167,6 @@ module.exports = class App extends React.Component {
                         </li>
                     ))}
                     </ul>
-                    <div className="controls">
-                        <div onClick={this.setSortBy.bind(this, 'name')}>Sort by Name</div>
-                        <div onClick={this.setSortBy.bind(this, 'created')}>Sort by Created</div>
-                        <div onClick={this.setSortBy.bind(this, 'modified')}>Sort by Modified</div>
-                    </div>
                 </div>
                 <div className="pane">
                     <textarea></textarea>
