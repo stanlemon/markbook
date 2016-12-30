@@ -5,7 +5,7 @@ const { createStore, bindActionCreators } = require('redux');
 const { Provider, connect } = require('react-redux');
 
 const actions = require('./actions');
-const reducer = require('./reducer/');
+const reducer = require('./reducer');
 
 const store = createStore(reducer);
 

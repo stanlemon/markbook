@@ -335,11 +335,10 @@ function createWindow(directory, position = [null, null], size = [800, 600], ful
 
     appWindow.directory = directory;
 
+    appWindow.loadURL('file://' + __dirname + '/src/index.html?directory=' + directory);
+
     if (process.env.NODE_ENV === 'development') {
-        appWindow.loadURL('file://' + __dirname + '/src/index.html?directory=' + directory);
         appWindow.webContents.openDevTools();
-    } else {
-        appWindow.loadURL('file://' + __dirname + '/dist/index.html?directory=' + directory);
     }
 
     appWindow.on('close', (e) => {

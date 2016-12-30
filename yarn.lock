@@ -1350,6 +1350,12 @@ debug@2.2.0, debug@~2.2.0:
   dependencies:
     ms "0.7.1"
 
+debug@^2.5.1:
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.0.tgz#bc596bcabe7617f11d9fa15361eded5608b8499b"
+  dependencies:
+    ms "0.7.2"
+
 debuglog@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/debuglog/-/debuglog-1.0.1.tgz#aa24ffb9ac3df9a2351837cfb2d279360cd78492"
@@ -1480,13 +1486,13 @@ editor@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/editor/-/editor-1.0.0.tgz#60c7f87bd62bcc6a894fa8ccd6afb7823a24f742"
 
-electron-compile@*:
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/electron-compile/-/electron-compile-4.0.3.tgz#9a80ba24ade8eef64d73ee1cd78d09b978155dfa"
+electron-compile@*, electron-compile@^5.1.1:
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/electron-compile/-/electron-compile-5.1.1.tgz#e6304cb33c13d3dd16b1e9adc028b13d3338c2c1"
   dependencies:
     "@paulcbetts/mime-types" "^2.1.10"
     btoa "^1.1.2"
-    debug-electron "^0.0.2"
+    debug "^2.5.1"
     lru-cache "^4.0.1"
     mkdirp "^0.5.1"
     pify "^2.3.0"
@@ -1560,15 +1566,15 @@ electron-packager@^8.3.0:
     sanitize-filename "^1.6.0"
     semver "^5.3.0"
 
-electron-prebuilt-compile@^1.3.9:
-  version "1.4.12"
-  resolved "https://registry.yarnpkg.com/electron-prebuilt-compile/-/electron-prebuilt-compile-1.4.12.tgz#ccda79b8b87e26098bd74bcb9792ab674efdb790"
+electron-prebuilt-compile@1.3.9:
+  version "1.3.9"
+  resolved "https://registry.yarnpkg.com/electron-prebuilt-compile/-/electron-prebuilt-compile-1.3.9.tgz#37fb635503860d4918dfceea424482ba7df911b0"
   dependencies:
     babel-plugin-array-includes "^2.0.3"
     babel-plugin-transform-async-to-generator "^6.8.0"
     babel-preset-es2016-node5 "^1.1.2"
     babel-preset-react "^6.11.1"
-    electron "1.4.12"
+    electron "1.3.9"
     electron-compile "*"
     electron-compilers "*"
 
@@ -1586,9 +1592,9 @@ electron-rebuild@^1.4.0:
     rimraf "^2.5.0"
     yargs "^3.31.0"
 
-electron@1.4.12:
-  version "1.4.12"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-1.4.12.tgz#ae6641aa1db01dd04e41c56639ca7b84b888767a"
+electron@1.3.9:
+  version "1.3.9"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-1.3.9.tgz#b7699feb8e7c77e03b98424b663d719605296ebe"
   dependencies:
     electron-download "^3.0.1"
     extract-zip "^1.0.3"
@@ -3919,18 +3925,17 @@ repeating@^2.0.0:
   dependencies:
     is-finite "^1.0.0"
 
-request@2, request@^2.45.0, request@^2.74.0, request@~2.75.0:
-  version "2.75.0"
-  resolved "https://registry.yarnpkg.com/request/-/request-2.75.0.tgz#d2b8268a286da13eaa5d01adf5d18cc90f657d93"
+request@2, request@^2.45.0, request@^2.55.0, request@^2.74.0, request@^2.79.0:
+  version "2.79.0"
+  resolved "https://registry.yarnpkg.com/request/-/request-2.79.0.tgz#4dfe5bf6be8b8cdc37fcf93e04b65577722710de"
   dependencies:
     aws-sign2 "~0.6.0"
     aws4 "^1.2.1"
-    bl "~1.1.2"
     caseless "~0.11.0"
     combined-stream "~1.0.5"
     extend "~3.0.0"
     forever-agent "~0.6.1"
-    form-data "~2.0.0"
+    form-data "~2.1.1"
     har-validator "~2.0.6"
     hawk "~3.1.3"
     http-signature "~1.1.0"
@@ -3938,12 +3943,12 @@ request@2, request@^2.45.0, request@^2.74.0, request@~2.75.0:
     isstream "~0.1.2"
     json-stringify-safe "~5.0.1"
     mime-types "~2.1.7"
-    node-uuid "~1.4.7"
     oauth-sign "~0.8.1"
-    qs "~6.2.0"
+    qs "~6.3.0"
     stringstream "~0.0.4"
     tough-cookie "~2.3.0"
     tunnel-agent "~0.4.1"
+    uuid "^3.0.0"
 
 request@2.55.0:
   version "2.55.0"
@@ -3968,17 +3973,18 @@ request@2.55.0:
     tough-cookie ">=0.12.0"
     tunnel-agent "~0.4.0"
 
-request@^2.55.0, request@^2.79.0:
-  version "2.79.0"
-  resolved "https://registry.yarnpkg.com/request/-/request-2.79.0.tgz#4dfe5bf6be8b8cdc37fcf93e04b65577722710de"
+request@~2.75.0:
+  version "2.75.0"
+  resolved "https://registry.yarnpkg.com/request/-/request-2.75.0.tgz#d2b8268a286da13eaa5d01adf5d18cc90f657d93"
   dependencies:
     aws-sign2 "~0.6.0"
     aws4 "^1.2.1"
+    bl "~1.1.2"
     caseless "~0.11.0"
     combined-stream "~1.0.5"
     extend "~3.0.0"
     forever-agent "~0.6.1"
-    form-data "~2.1.1"
+    form-data "~2.0.0"
     har-validator "~2.0.6"
     hawk "~3.1.3"
     http-signature "~1.1.0"
@@ -3986,12 +3992,12 @@ request@^2.55.0, request@^2.79.0:
     isstream "~0.1.2"
     json-stringify-safe "~5.0.1"
     mime-types "~2.1.7"
+    node-uuid "~1.4.7"
     oauth-sign "~0.8.1"
-    qs "~6.3.0"
+    qs "~6.2.0"
     stringstream "~0.0.4"
     tough-cookie "~2.3.0"
     tunnel-agent "~0.4.1"
-    uuid "^3.0.0"
 
 require-directory@^2.1.1:
   version "2.1.1"
@@ -4153,15 +4159,9 @@ source-map-support@^0.4.2:
   dependencies:
     source-map "^0.5.3"
 
-source-map@0.1.31:
+source-map@0.1.31, source-map@0.1.x, source-map@~0.1.7:
   version "0.1.31"
   resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.1.31.tgz#9f704d0d69d9e138a81badf6ebb4fde33d151c61"
-  dependencies:
-    amdefine ">=0.0.4"
-
-source-map@0.1.x, source-map@~0.1.7:
-  version "0.1.43"
-  resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.1.43.tgz#c24bc146ca517c1471f5dacbe2571b2b7f9e3346"
   dependencies:
     amdefine ">=0.0.4"
 
