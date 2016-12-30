@@ -1,6 +1,7 @@
 const { dialog, Menu, BrowserWindow, shell, app } = require('electron');
 const path = require('path');
 const fs = require('fs');
+const mkdirp = require('mkdirp');
 const format = require('date-fns/format');
 
 let activeWindows = [];
@@ -255,7 +256,9 @@ function getSettings() {
 }
 
 function saveSettings(settings) {
-    fs.writeFileSync(getSettingsPath(), JSON.stringify(settings));
+    const settingsPath = getSettingsPath();
+    mkdirp.sync(path.dirname(settingsPath));
+    fs.writeFileSync(settingsPath, JSON.stringify(settings));
 }
 
 function saveWindowSettings(directory, windowSettings) {

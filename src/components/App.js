@@ -1,5 +1,3 @@
-require("babel-polyfill");
-
 const { ipcRenderer } = require('electron');
 
 const React = require('react');
@@ -37,6 +35,7 @@ module.exports = class App extends React.Component {
         });
 
         this.simplemde = new SimpleMde({
+            autoDownloadFontAwesome: false,
             autofocus: true,
             hideIcons: ['fullscreen', 'side-by-side'],
             renderingConfig: {
