@@ -338,7 +338,7 @@ function createWindow(directory, position = [null, null], size = [800, 600], ful
 
     appWindow.directory = directory;
 
-    appWindow.loadURL('file://' + __dirname + '/src/index.html?directory=' + directory);
+    appWindow.loadURL('file://' + __dirname + '/index.html?directory=' + directory);
 
     if (process.env.NODE_ENV === 'development') {
         appWindow.webContents.openDevTools();
