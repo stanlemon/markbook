@@ -11,7 +11,8 @@
     "lint": "eslint src",
     "compile": "NODE_ENV=production electron-compile .",
     "package": "NODE_ENV=production electron-forge package",
-    "rebuild": "electron-rebuild"
+    "rebuild": "electron-rebuild",
+    "publish": "electron-forge publish"
   },
   "devDependencies": {
     "babel-cli": "^6.18.0",
@@ -47,10 +48,14 @@
     "forge": {
       "make_targets": {
         "darwin": [
-          "zip"
+          "zip", "dmg"
         ]
       },
-      "electronPackagerConfig": {}
+      "electronPackagerConfig": {},
+      "github_repository": {
+        "owner": "stanlemon",
+        "name": "markbook"
+      }
     }
   },
   "eslintConfig": {

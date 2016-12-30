@@ -5,3 +5,4 @@ dist/
 .vscode/
 out/
 .cache/
+npm-debug.log
