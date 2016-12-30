@@ -3,7 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const format = require('date-fns/format');
 
-const windows = [];
+let activeWindows = [];
 
 const AppName = 'Markbook';
 const menus = [
@@ -201,7 +201,7 @@ function getSettings() {
 
     if (!fs.existsSync(settingsPath)) {
         const defaultSettings = {
-            directories: []
+            windows: []
         };
         saveSettings(defaultSettings);
     }
@@ -213,7 +213,19 @@ function saveSettings(settings) {
     fs.writeFileSync(getSettingsPath(), JSON.stringify(settings));
 }
 
-const settings = getSettings();
+function saveWindowSettings(directory, windowSettings) {
+    const window = Object.assign({}, settings.windows.find(
+        (d) => d.directory === directory
+    ), windowSettings);
+
+    settings.windows = [...settings.windows.filter(
+        (d) => d.directory !== directory
+    ), window];
+
+    saveSettings(settings);
+}
+
+let settings = getSettings();
 
 function openDirectory() {
     dialog.showOpenDialog({
@@ -221,9 +233,11 @@ function openDirectory() {
     }, (directories) => {
         createWindow(directories[0]);
 
-        settings.directories = [...new Set([
-            ...settings.directories,
-            directories[0]
+        settings.windows = [...new Set([
+            ...settings.windows,
+            {
+                directory: directories[0]
+            }
         ])];
 
         saveSettings(settings);
@@ -235,29 +249,42 @@ function newFile(directory, callback) {
 
     dialog.showSaveDialog({
         title: date,
-        defaultPath: directory,
+        defaultPath: path.join(directory, date + '.md'),
     }, (filename) => {
-        fs.writeFileSync(filename, "");
-        callback(filename);
+        if (filename) {
+            fs.writeFileSync(filename, "");
+            callback(filename);
+        }
     });
 }
 
-function createWindow(directory) {
-    if (windows.length > 0) {
-        const prevWindow = windows.reduce((a, b) => 
+function createWindow(directory, position = [null, null], size = [800, 600], fullscreen = false) {
+    if (activeWindows.length > 0) {
+        const prevWindow = activeWindows.reduce((a, b) => 
             b.directory === directory ? a : b
         );
         prevWindow.focus();
         return;
     }
 
+    app.addRecentDocument(directory);
+
     const appWindow = new BrowserWindow({
-        width: 800,
-        height: 600,
+        minWidth: 720,
+        minHeight: 450,
+        show: false,
+        width: size[0],
+        height: size[1],
+        x: position[0],
+        y: position[1],
         title: directory
     });
 
-    windows.push(appWindow);
+    if (fullscreen) {
+        appWindow.setFullScreen(true);
+    }
+
+    activeWindows.push(appWindow);
 
     appWindow.directory = directory;
 
@@ -265,13 +292,43 @@ function createWindow(directory) {
         appWindow.loadURL('file://' + __dirname + '/src/index.html?directory=' + directory);
         appWindow.webContents.openDevTools();
     } else {
-        appWindow.loadURL('file://' + __dirname + '/dist/index.html?directory=' + directory);
+        appWindow.loadURL('fi197le://' + __dirname + '/dist/index.html?directory=' + directory);
     }
 
-    appWindow.on('close', () => {
-        settings.directories = settings.directories.filter((v) => v !== directory);
+    appWindow.on('close', (e) => {
+        if (appWindow.quit !== true) {
+            activeWindows = activeWindows.filter((w) => w.directory !== directory);
 
-        saveSettings(settings);
+            settings.windows = settings.windows.filter(
+                (v) => v.directory !== directory
+            );
+
+            saveSettings(settings);
+        }
+    });
+
+    appWindow.once('ready-to-show', () => {
+        appWindow.show()
+    });
+
+    appWindow.on('resize', (e) => {
+        if (!appWindow.isFullScreen()) {
+            saveWindowSettings(appWindow.directory, { size: appWindow.getSize() });
+        }
+    });
+
+    appWindow.on('move', (e) => {
+        if (!appWindow.isFullScreen()) {
+            saveWindowSettings(appWindow.directory, { position: appWindow.getPosition() });
+        }
+    });
+
+    appWindow.on('enter-full-screen', (e) => {
+        saveWindowSettings(appWindow.directory, { fullscreen: true });
+    });
+
+    appWindow.on('leave-full-screen', (e) => {
+        saveWindowSettings(appWindow.directory, { fullscreen: false });
     });
 }
 
@@ -280,11 +337,20 @@ app.setName(AppName);
 app.on('ready', () => {
     Menu.setApplicationMenu(Menu.buildFromTemplate(menus));
 
-    if (settings.directories.length > 0) {
-        settings.directories.forEach((directory) => {
-            createWindow(directory);
+    if (settings.windows.length > 0) {
+        settings.windows.forEach((window) => {
+            createWindow(
+                window.directory,
+                window.position,
+                window.size,
+                window.fullscreen
+            );
         });
+    } else {
+        openDirectory();
     }
+
+    app.focus();
 });
 
 app.on('window-all-closed', () => {
@@ -295,7 +361,17 @@ app.on('window-all-closed', () => {
 
 app.on('activate', () => {
     // When there are no windows and we activate, open the directory prompt
-    if (windows.length === 0) {
+    if (activeWindows.length === 0) {
         openDirectory();
     }
+});
+
+app.on('before-quit', () => {
+    activeWindows.forEach((w) => {
+        w.quit = true;
+    });
+});
+
+app.on('will-quit', () => {
+    saveSettings(settings);
 });

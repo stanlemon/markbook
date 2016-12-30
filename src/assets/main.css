@@ -62,9 +62,18 @@ body {
 
 .CodeMirror {
     height: calc(100% - 100px);
+    border-left: none;
+    border-right: none;
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+
+.editor-toolbar {
+    border: none;
 }
 
 .Resizer {
+    background: #000;
     opacity: .2;
     z-index: 1;
     -moz-box-sizing: border-box;

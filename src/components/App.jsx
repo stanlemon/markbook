@@ -9,8 +9,6 @@ const format = require('date-fns/format');
 const SimpleMde = require('simplemde');
 const SplitPane = require('react-split-pane');
 
-console.log(SplitPane);
-
 const DATE_FORMAT = 'YYYY-MM-DD @ HH:mm';
 
 module.exports = class App extends React.Component {
