@@ -9,15 +9,18 @@ body {
     margin: 0px;
     padding: 0px;
     background-color: #fff;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, Arial, Helvetica, sans-serif;
 }
 
 .pane {
     height: 100%;
+    overflow: none;
 }
 
-.pane:first-child {
-    overflow: scroll;
+.sidebar {
+    color: #444;
+    background-color: #f9f9f9;
+    overflow-y: scroll;
 }
 
 .note-list {
@@ -67,6 +70,7 @@ body {
 }
 
 .CodeMirror {
+    font-family: "Source Code Pro", Monaco, Courier New, Courier, monospace;
     height: ~"calc(100% - 105px)";
     border-left: none;
     border-right: none;

@@ -1,6 +1,6 @@
 {
-  "name": "Markbook",
-  "version": "0.5.1",
+  "name": "markbookapp",
+  "version": "0.5.2",
   "description": "A markdown notebook",
   "author": "Stan Lemon <stosh1985@gmail.com>",
   "license": "MIT",
@@ -51,10 +51,14 @@
           "zip", "dmg"
         ]
       },
-      "electronPackagerConfig": {},
+      "electronPackagerConfig": {
+        "name": "Markbook"
+      },
       "github_repository": {
         "owner": "stanlemon",
-        "name": "markbook"
+        "name": "markbook",
+        "draft": false,
+        "prerelease": true
       }
     }
   },
