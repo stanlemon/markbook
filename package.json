@@ -55,7 +55,9 @@
       },
       "github_repository": {
         "owner": "stanlemon",
-        "name": "markbook"
+        "name": "markbook",
+        "draft": false,
+        "prerelease": true
       },
       "electronPackagerConfig": {
         "osx-sign": {
