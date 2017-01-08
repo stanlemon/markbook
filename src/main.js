@@ -1,8 +1,9 @@
-const { dialog, Menu, BrowserWindow, shell, app } = require('electron');
-const path = require('path');
-const fs = require('fs');
-const mkdirp = require('mkdirp');
-const format = require('date-fns/format');
+import { dialog, Menu, BrowserWindow, shell, app } from 'electron';
+import path from 'path';
+import fs from 'fs';
+import mkdirp from 'mkdirp';
+import format from 'date-fns/format';
+import async from 'async';
 
 let activeWindows = [];
 
@@ -310,11 +311,14 @@ function newFile(directory, callback) {
 
 function createWindow(directory, position = [null, null], size = [800, 600], fullscreen = false) {
     if (activeWindows.length > 0) {
-        const prevWindow = activeWindows.reduce((a, b) => 
-            b.directory === directory ? a : b
+        const windowExists = activeWindows.findIndex((window) =>
+            window.directory === directory
         );
-        prevWindow.focus();
-        return;
+
+        if (windowExists > 0) {
+            activeWindows[windowExists].focus();
+            return;
+        }
     }
 
     const appWindow = new BrowserWindow({
@@ -387,7 +391,7 @@ app.on('ready', () => {
     Menu.setApplicationMenu(Menu.buildFromTemplate(menus));
 
     if (settings.windows.length > 0) {
-        settings.windows.forEach((window) => {
+        async.each(settings.windows, (window) => {
             createWindow(
                 window.directory,
                 window.position,

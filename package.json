@@ -1,7 +1,7 @@
 {
   "name": "markbookapp",
   "productName": "Markbook",
-  "version": "0.5.3",
+  "version": "0.6.0",
   "description": "A markdown notebook",
   "author": "Stan Lemon <stosh1985@gmail.com>",
   "license": "MIT",
@@ -33,6 +33,7 @@
     "eslint-plugin-react": "6.4.1"
   },
   "dependencies": {
+    "async": "^2.1.4",
     "babel-polyfill": "^6.20.0",
     "chokidar": "^1.6.1",
     "date-fns": "^1.21.1",

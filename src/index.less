@@ -5,6 +5,10 @@
 
 @import "../node_modules/simplemde/dist/simplemde.min.css";
 
+body, html, #root {
+    height: 100%;
+}
+
 body {
     margin: 0px;
     padding: 0px;
@@ -14,7 +18,7 @@ body {
 
 .pane {
     height: 100%;
-    overflow: none;
+    overflow: hidden;
 }
 
 .sidebar {
@@ -70,8 +74,8 @@ body {
 }
 
 .CodeMirror {
-    font-family: "Source Code Pro", Monaco, Courier New, Courier, monospace;
     height: ~"calc(100% - 105px)";
+    font-family: "Source Code Pro", Monaco, Courier New, Courier, monospace;
     border-left: none;
     border-right: none;
     border-bottom-left-radius: 0px;

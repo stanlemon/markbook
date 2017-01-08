@@ -1,26 +1,26 @@
-const { ipcRenderer } = require('electron');
-
-const React = require('react');
-const fs = require('fs');
-const path = require('path');
-const chokidar = require('chokidar');
-const format = require('date-fns/format');
-const SimpleMde = require('simplemde');
-const SplitPane = require('react-split-pane');
+import { ipcRenderer } from 'electron';
+import React from 'react';
+import fs from 'fs';
+import path from 'path';
+import chokidar from 'chokidar';
+import format from 'date-fns/format';
+import Editor from './Editor';
+import SplitPane from 'react-split-pane';
 
 const DATE_FORMAT = 'YYYY-MM-DD @ HH:mm';
 
-module.exports = class App extends React.Component {
+export default class App extends React.Component {
 
     constructor(props) {
         super(props);
 
         this.state = {
+            content: null,
+            directory: props.directory,
             sort: 'name',
             direction: 'ASC',
             active: null,
-            changed: false,
-            files: new Set()
+            files: new Set(props.files)
         };
     }
 
@@ -33,49 +33,14 @@ module.exports = class App extends React.Component {
             this.openFile(file);
         });
 
-        this.simplemde = new SimpleMde({
-            spellChecker: false,
-            autoDownloadFontAwesome: false,
-            autofocus: true,
-            hideIcons: ['fullscreen', 'side-by-side'],
-            renderingConfig: {
-                singleLineBreaks: true,
-                codeSyntaxHighlighting: true
-            },
-            showIcons: ["code", "table"],
-        });
-
-        this.simplemde.codemirror.on("change", () => {
-            this.setState({
-                changed: true
-            });
-        });
-
-        setInterval(() => {
-            const content = this.simplemde.value();
-
-            if (this.state.changed && this.state.active && this.state.content !== content) {
-                this.setState({
-                    content
-                });
-
-                fs.writeFileSync(this.state.active, content);
-            }
-        }, 1000);
-
         const watcher = chokidar.watch(this.props.directory, {
             ignored: /[\/\\]\./,
+            ignoreInitial: true,
             persistent: true
         });
 
         watcher
-            .on('add', (f) => {
-                const stats = fs.statSync(f);
-
-                if (this.state.files.size === 0) {
-                    this.openFile(f);
-                }
-
+            .on('add', (f, stats) => {
                 this.setState({
                     files: this.state.files.add({
                         name: path.basename(f),
@@ -84,6 +49,11 @@ module.exports = class App extends React.Component {
                         modified: stats.mtime,
                     })
                 });
+
+                // We added a new file to an empty directory so we will open it by default
+                if (this.state.active === null) {
+                    this.openFirstFile();
+                }
             })
             .on('unlink', (f) => {
                 this.setState({
@@ -91,21 +61,88 @@ module.exports = class App extends React.Component {
                         return f !== file.path
                     }))
                 });
+
+                // We unlinked the file currently open, so we need to close the editor
+                if (this.state.active === f) {
+                    this.setState({
+                        active: null,
+                        content: null,
+                    });
+
+                    // If we have other files in the notebook, attempt to open the first one
+                    if (this.state.files.size > 0) {
+                        this.openFirstFile();
+                    }
+                }
             })
-            .on('change', (f) => {
-                console.log('File', f, 'has been changed');
-            })
+            .on('change', (f) => {})
         ;
+
+        // Open the first file in the current directory...
+        if (this.state.files.size > 0) {
+            this.openFirstFile();
+        }
+    }
+
+    handleChange(content) {
+        fs.writeFileSync(this.state.active, content);
+    }
+
+    render() {
+        if (this.state.files.size === 0) {
+            return (
+                <div style={{ color: '#555', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                    <em>There are no notes in this notebook yet!  Create one to get started.</em>
+                </div>
+            )
+        }
+
+        const files = this.sortFiles();
+
+        const activeCss = {
+            backgroundColor: '#eee'
+        };
+
+        return (
+            <SplitPane split="vertical" minSize={200} defaultSize={250}>
+                <div className="pane sidebar">
+                    <ul className="note-list">
+                    {files.map((file) => (
+                        <li style={file.path === this.state.active ? activeCss : {}} key={file.name} onClick={this.openFile.bind(this, file.path)}>
+                            <div style={{ textOverflow: 'ellipsis-word', lineHeight: '1.2em', whiteSpace: 'nowrap' }}>
+                                {file.name}
+                            </div>
+                            { this.state.sort !== 'modified' && 
+                                <div className="date-info">
+                                    Created on {format(file.created, DATE_FORMAT)}
+                                </div>
+                            }
+                            { this.state.sort === 'modified' && 
+                                <div className="date-info">
+                                    Last modified on {format(file.modified, DATE_FORMAT)}
+                                </div>
+                            }
+                        </li>
+                    ))}
+                    </ul>
+                </div>
+                <div className="pane">
+                    <Editor content={this.state.content} onChange={this.handleChange.bind(this)} />
+                </div>
+           </SplitPane>
+        );
+    }
+
+    openFirstFile() {
+        this.openFile([...this.state.files].slice(0,1)[0].path);
     }
 
     openFile(file) {
         const content = fs.readFileSync(file).toString();
         this.setState({
             content,
-            changed: false,
             active: file
         });
-        this.simplemde.value(content);
     }
 
     setSortBy(type) {
@@ -165,45 +202,7 @@ module.exports = class App extends React.Component {
                 } else {
                     return 0;
                 }
-
             }
         }))];
-    }
-
-    render() {
-        const files = this.sortFiles();
-
-        const activeCss = {
-            backgroundColor: '#eee'
-        };
-
-        return (
-            <SplitPane split="vertical" minSize={200} defaultSize={250}>
-                <div className="pane sidebar">
-                    <ul className="note-list">
-                    {files.map((file) => (
-                        <li style={file.path === this.state.active ? activeCss : {}} key={file.name} onClick={this.openFile.bind(this, file.path)}>
-                            <div style={{ textOverflow: 'ellipsis-word', lineHeight: '1.2em', whiteSpace: 'nowrap' }}>
-                                {file.name}
-                            </div>
-                            { this.state.sort !== 'modified' && 
-                                <div className="date-info">
-                                    Created on {format(file.created, DATE_FORMAT)}
-                                </div>
-                            }
-                            { this.state.sort === 'modified' && 
-                                <div className="date-info">
-                                    Last modified on {format(file.modified, DATE_FORMAT)}
-                                </div>
-                            }
-                        </li>
-                    ))}
-                    </ul>
-                </div>
-                <div className="pane">
-                    <textarea></textarea>
-                </div>
-           </SplitPane>
-        );
     }
 };
