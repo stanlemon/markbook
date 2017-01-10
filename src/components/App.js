@@ -15,12 +15,15 @@ export default class App extends React.Component {
         super(props);
 
         this.state = {
+            sidebarWidth: props.sidebarWidth,
             content: null,
             directory: props.directory,
             sort: 'name',
             direction: 'ASC',
             active: null,
-            files: new Set(props.files)
+            files: new Set(props.files),
+            message: null,
+            error: null,
         };
     }
 
@@ -104,32 +107,40 @@ export default class App extends React.Component {
         };
 
         return (
-            <SplitPane split="vertical" minSize={200} defaultSize={250}>
-                <div className="pane sidebar">
-                    <ul className="note-list">
-                    {files.map((file) => (
-                        <li style={file.path === this.state.active ? activeCss : {}} key={file.name} onClick={this.openFile.bind(this, file.path)}>
-                            <div style={{ textOverflow: 'ellipsis-word', lineHeight: '1.2em', whiteSpace: 'nowrap' }}>
-                                {file.name}
-                            </div>
-                            { this.state.sort !== 'modified' && 
-                                <div className="date-info">
-                                    Created on {format(file.created, DATE_FORMAT)}
+            <div>
+                { this.state.message &&
+                    <div className="toaster green">{this.state.message}</div>
+                }
+                { this.state.error && 
+                    <div className="toaster red">{this.state.error}</div>
+                }
+                <SplitPane split="vertical" minSize={200} defaultSize={this.state.sidebarWidth}>
+                    <div className="pane sidebar">
+                        <ul className="note-list">
+                        {files.map((file) => (
+                            <li style={file.path === this.state.active ? activeCss : {}} key={file.name} onClick={this.openFile.bind(this, file.path)}>
+                                <div style={{ textOverflow: 'ellipsis-word', lineHeight: '1.2em', whiteSpace: 'nowrap' }}>
+                                    {file.name}
                                 </div>
-                            }
-                            { this.state.sort === 'modified' && 
-                                <div className="date-info">
-                                    Last modified on {format(file.modified, DATE_FORMAT)}
-                                </div>
-                            }
-                        </li>
-                    ))}
-                    </ul>
-                </div>
-                <div className="pane">
-                    <Editor content={this.state.content} onChange={this.handleChange.bind(this)} />
-                </div>
-           </SplitPane>
+                                { this.state.sort !== 'modified' && 
+                                    <div className="date-info">
+                                        Created on {format(file.created, DATE_FORMAT)}
+                                    </div>
+                                }
+                                { this.state.sort === 'modified' && 
+                                    <div className="date-info">
+                                        Last modified on {format(file.modified, DATE_FORMAT)}
+                                    </div>
+                                }
+                            </li>
+                        ))}
+                        </ul>
+                    </div>
+                    <div className="pane">
+                        <Editor content={this.state.content} onChange={this.handleChange.bind(this)} />
+                    </div>
+                </SplitPane>
+            </div>
         );
     }
 
@@ -205,4 +216,8 @@ export default class App extends React.Component {
             }
         }))];
     }
+};
+
+App.defaultProps = {
+    sidebarWidth: 200
 };
