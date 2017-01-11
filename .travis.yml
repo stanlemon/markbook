@@ -7,5 +7,5 @@ os:
 sudo: required
 
 script:
-  - scripts/macos-sign.sh
+  - sudo sh -e scripts/macos-sign.sh
   - npm run publish
