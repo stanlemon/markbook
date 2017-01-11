@@ -2,9 +2,10 @@ language: node_js
 node_js:
   - "6"
 os:
-- osx
+  - osx
 
 sudo: required
 
 script:
- - npm run publish
+  - scripts/macos-sign.sh
+  - npm run publish
