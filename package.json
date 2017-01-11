@@ -1,7 +1,7 @@
 {
   "name": "markbookapp",
   "productName": "Markbook",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "description": "A markdown notebook",
   "author": "Stan Lemon <stosh1985@gmail.com>",
   "license": "MIT",
@@ -61,9 +61,7 @@
         "prerelease": true
       },
       "electronPackagerConfig": {
-        "osx-sign": {
-          "identity": "Developer ID Application: Stan Lemon (GQFK2JQL2Z)"
-        }
+        "osx-sign": true
       }
     }
   },

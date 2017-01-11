@@ -4,8 +4,11 @@ node_js:
 os:
   - osx
 
-sudo: required
+cache:
+  yarn: true
+  directories:
+    - node_modules
 
 script:
-  - sudo sh -e scripts/macos-sign.sh
+  - ./scripts/macos-sign.sh
   - npm run publish
