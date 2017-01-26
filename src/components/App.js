@@ -40,7 +40,9 @@ export default class App extends React.Component {
         });
 
         watcher
-            .on('add', (f, stats) => {
+            .on('add', (f) => {
+                const stats = fs.statSync(f);
+                console.log('Adding ' + f, stats);
                 this.setState({
                     files: this.state.files.add({
                         name: path.basename(f),
@@ -56,6 +58,7 @@ export default class App extends React.Component {
                 }
             })
             .on('unlink', (f) => {
+                console.log('Removing ' + f);
                 this.setState({
                     files: new Set([...this.state.files].filter((file) => {
                         return f !== file.path
