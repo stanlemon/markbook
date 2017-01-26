@@ -4,11 +4,6 @@ node_js:
 os:
   - osx
 
-cache:
-  yarn: true
-  directories:
-    - node_modules
-
 script:
   - ./scripts/macos-sign.sh
   - npm run publish
