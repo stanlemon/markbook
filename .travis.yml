@@ -4,6 +4,14 @@ node_js:
 os:
   - osx
 
+cache:
+  yarn: true
+  directories:
+    - node_modules
+
 script:
   - ./scripts/macos-sign.sh
   - npm run publish
+
+after_failure:
+  - cat /Users/travis/build/stanlemon/markbook/yarn-error.log
