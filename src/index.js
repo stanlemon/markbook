@@ -19,6 +19,11 @@ loadDirectory(directory, (files) => {
 
 function loadDirectory(directory, callback) {
     fs.readdir(directory, (err, files) => {
+        if (files === undefined) {
+            callback([]);
+            return;
+        }
+
         async.map(files.filter((f) => f.substring(0, 1) !== '.'), (name, done) => {
             const file = path.join(directory, name);
 
