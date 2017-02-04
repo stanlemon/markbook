@@ -21,7 +21,7 @@
     "babel-preset-env": "^1.1.8",
     "babel-preset-latest": "^6.22.0",
     "babel-preset-react": "^6.22.0",
-    "electron-forge": "2.7.3",
+    "electron-forge": "2.8.0",
     "electron-prebuilt-compile": "1.4.15",
     "electron-rebuild": "^1.5.7",
     "eslint": "^3.14.0",
