@@ -16,5 +16,7 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
     echo "Unlocking keychain..."
     security unlock-keychain -p travisci $KEYCHAIN;
     echo "Importing code signing certificate"
-    security import $CERTIFICATE_P12 -k $KEYCHAIN -T /usr/bin/codesign -P "";
+    security import $CERTIFICATE_P12 -k $KEYCHAIN -P travisci -T /usr/bin/codesign;
+
+    security set-key-partition-list -S apple-tool:,apple: -s -k travisci $KEYCHAIN
 fi
