@@ -2,7 +2,7 @@ language: node_js
 node_js:
   - "6"
 os: osx
-  - osx_image: xcode8.2
+osx_image: xcode8.2
 
 cache:
   yarn: true
