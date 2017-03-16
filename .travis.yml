@@ -21,3 +21,4 @@ script:
 
 after_failure:
   - cat /Users/travis/build/stanlemon/markbook/yarn-error.log
+  - cat /Users/travis/build/stanlemon/markbook/npm-debug.log
