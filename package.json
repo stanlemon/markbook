@@ -16,9 +16,9 @@
     "publish": "electron-forge publish"
   },
   "devDependencies": {
-    "babel-cli": "^6.23.0",
+    "babel-cli": "^6.24.0",
     "babel-eslint": "7.1",
-    "babel-preset-env": "^1.2.1",
+    "babel-preset-env": "^1.2.2",
     "babel-preset-react": "^6.23.0",
     "electron-forge": "2.8.3",
     "electron-prebuilt-compile": "1.6.2",

@@ -4,21 +4,12 @@ node_js:
 os: osx
 osx_image: xcode8.2
 
-cache:
-  yarn: true
-  directories:
-    - node_modules
-
 install:
-  - export YARN_GPG=no
-  - curl -o- -L https://yarnpkg.com/install.sh | bash
-  - export PATH=$HOME/.yarn/bin:$PATH
-  - yarn
+  - npm install
 
 script:
   - ./scripts/macos-sign.sh
   - npm run publish
 
 after_failure:
-  - cat /Users/travis/build/stanlemon/markbook/yarn-error.log
   - cat /Users/travis/build/stanlemon/markbook/npm-debug.log

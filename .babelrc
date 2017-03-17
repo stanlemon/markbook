@@ -2,17 +2,15 @@
   "env": {
     "development": {
       "presets": [
-        ["env", { "targets": { "electron": "1.4.0" } }],
-        "react",
-        "latest"
+        ["env", { "targets": { "electron": "1.6.0" } }],
+        "react"
       ],
       "sourceMaps": "inline"
     },
     "production": {
       "presets": [
-        ["env", { "targets": { "electron": "1.4.0" } }],
-        "react",
-        "latest"
+        ["env", { "targets": { "electron": "1.6.0" } }],
+        "react"
       ],
       "sourceMaps": "none"
     }
