@@ -9,7 +9,7 @@ install:
 
 script:
   - ./scripts/macos-sign.sh
-  - npm run publish
+  - travis_wait npm run publish
 
 after_failure:
   - cat /Users/travis/build/stanlemon/markbook/npm-debug.log
