@@ -1,7 +1,7 @@
 {
   "name": "markbookapp",
   "productName": "Markbook",
-  "version": "0.6.5",
+  "version": "0.6.6",
   "description": "A markdown notebook",
   "author": "Stan Lemon <stosh1985@gmail.com>",
   "license": "MIT",
@@ -60,7 +60,7 @@
         "prerelease": true
       },
       "electronPackagerConfig": {
-        "osx-sign": true
+        "osxSign": true
       }
     }
   },
